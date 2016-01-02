@@ -647,7 +647,7 @@ public abstract class SesameSortedRDFWriter extends RDFWriterBase {
     protected String[] trailingComments = null;
 
     /** String data type option */
-    protected SesameSortedRDFWriterFactory.StringDataTypeOptions stringDataTypeOption = SesameSortedRDFWriterFactory.StringDataTypeOptions.implicit;
+    protected SesameSortedRDFWriterFactory.StringDataTypeOptions stringDataTypeOption = SesameSortedRDFWriterFactory.StringDataTypeOptions.defaultEnum;
 
     /** Unsorted list of subjects which are OWL ontologies, as they are rendered before other subjects. */
     protected UnsortedTurtleResourceList unsortedOntologies = null;
@@ -672,6 +672,12 @@ public abstract class SesameSortedRDFWriter extends RDFWriterBase {
 
     /** Predicates that are specially rendered before all others. */
     protected ArrayList<URI> firstPredicates = null;
+
+    /** Predicate namespaces for which string data typing is always over-ridden to be explicit. */
+    protected ArrayList<URI> alwaysExplicitPredicateNamespaces = new ArrayList<URI>();
+
+    /** Predicate namespaces for which string data typing is always over-ridden to be implicit. */
+    protected ArrayList<URI> alwaysImplicitPredicateNamespaces = new ArrayList<URI>();
 
     /** Comparator for Strings that shorts longer strings first. */
     protected class StringLengthComparator implements Comparator<String> {
@@ -1069,6 +1075,26 @@ public abstract class SesameSortedRDFWriter extends RDFWriterBase {
         return (useTurtleQuoting ? "<" : "") +
                 uri.stringValue() +
                 (useTurtleQuoting ? ">" : ""); // if nothing else, do this
+    }
+
+    /** Logic used to determine whether to use explicit data typing for strings, or not. */
+    protected boolean useExplicitStringDataTyping(URI predicate, URI objectDataType) {
+        final List<URI> stringDataTypes = Arrays.asList(xsString, rdfLangString); // only string types can have implicit typing as an option
+        if (stringDataTypes.contains(objectDataType)) {
+            for (URI namespace : alwaysExplicitPredicateNamespaces) { // for predicates in these namespaces, force explicit data typing
+                if (predicate.toString().startsWith(namespace.toString())) { return true; }
+            }
+            for (URI namespace : alwaysImplicitPredicateNamespaces) { // for predicates in these namespaces, force implicit data typing
+                if (predicate.toString().startsWith(namespace.toString())) { return false; }
+            }
+            switch (stringDataTypeOption) {
+                case explicit: return true;
+                case implicit: return false;
+            }
+            return true; // last-ditch default, don't make string data types implicit unless necessary
+        } else {
+            return true;
+        }
     }
 
     abstract protected void writeHeader(Writer out, SortedTurtleObjectList importList, String[] leadingComments) throws Exception;

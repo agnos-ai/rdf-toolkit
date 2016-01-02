@@ -28,7 +28,7 @@ public class SesameSortedRDFWriterFactory implements RDFWriterFactory {
         trix("trix", "(TriX)", RDFFormat.TRIX),
         turtle("turtle", "(Turtle)", RDFFormat.TURTLE);
 
-        private static final SourceFormats defaultEnum = auto;
+        public static final SourceFormats defaultEnum = auto;
 
         private String optionValue = null;
         private String optionComment = null;
@@ -77,7 +77,7 @@ public class SesameSortedRDFWriterFactory implements RDFWriterFactory {
         rdf_xml("rdf-xml", "(RDF/XML)", RDFFormat.RDFXML),
         turtle("turtle", "(Turtle)", RDFFormat.TURTLE);
 
-        private static final TargetFormats defaultEnum = turtle;
+        public static final TargetFormats defaultEnum = turtle;
 
         private String optionValue = null;
         private String optionComment = null;
@@ -127,7 +127,7 @@ public class SesameSortedRDFWriterFactory implements RDFWriterFactory {
         explicit("explicit"),
         implicit("implicit");
 
-        private static final StringDataTypeOptions defaultEnum = implicit;
+        public static final StringDataTypeOptions defaultEnum = explicit;
 
         private String optionValue = null;
 

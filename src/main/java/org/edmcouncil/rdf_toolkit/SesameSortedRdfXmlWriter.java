@@ -259,8 +259,7 @@ public class SesameSortedRdfXmlWriter extends SesameSortedRDFWriter {
                     output.endAttribute();
                 } else if (value instanceof Literal) {
                     if (((Literal)value).getDatatype() != null) {
-                        boolean useExplicit = (stringDataTypeOption == SesameSortedRDFWriterFactory.StringDataTypeOptions.explicit) || !(xsString.equals(((Literal)value).getDatatype()) || rdfLangString.equals(((Literal)value).getDatatype()));
-                        if (useExplicit) {
+                        if (useExplicitStringDataTyping(predicate, ((Literal)value).getDatatype())) {
                             output.writeStartAttribute(rdfPrefix, RDF_NS_URI, "datatype");
                             QName datatypeQName = convertUriToQName(((Literal) value).getDatatype());
                             if ((datatypeQName == null) || (datatypeQName.getPrefix() == null) || (datatypeQName.getPrefix().length() < 1)) {

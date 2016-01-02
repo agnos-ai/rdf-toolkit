@@ -197,7 +197,7 @@ public class SesameSortedTurtleWriter extends SesameSortedRDFWriter {
         writePredicate(out, predicate);
         if (values.size() == 1) {
             out.write(" ");
-            writeObject(out, values.first());
+            writeObject(out, values.first(), predicate);
             out.write(" ;");
             if (out instanceof IndentingWriter) {
                 IndentingWriter output = (IndentingWriter)out;
@@ -217,7 +217,7 @@ public class SesameSortedTurtleWriter extends SesameSortedRDFWriter {
             int valueIndex = 0;
             for (Value value : values) {
                 valueIndex += 1;
-                writeObject(out, value);
+                writeObject(out, value, predicate);
                 if (valueIndex < numValues) { out.write(" ,"); }
                 if (out instanceof IndentingWriter) {
                     IndentingWriter output = (IndentingWriter)out;
@@ -249,13 +249,13 @@ public class SesameSortedTurtleWriter extends SesameSortedRDFWriter {
         out.write(convertUriToString(uri, /*useTurtleQuoting*/true));
     }
 
-    protected void writeObject(Writer out, Value value) throws Exception {
+    protected void writeObject(Writer out, Value value, URI predicate) throws Exception {
         if (value instanceof BNode) {
             writeObject(out, (BNode) value);
         } else if (value instanceof URI) {
             writeObject(out, (URI)value);
         } else if (value instanceof Literal) {
-            writeObject(out, (Literal)value);
+            writeObject(out, (Literal)value, predicate);
         } else {
             out.write("\"" + value.stringValue() + "\"");
             out.write(" ");
@@ -313,16 +313,15 @@ public class SesameSortedTurtleWriter extends SesameSortedRDFWriter {
         writeUri(out, uri);
     }
 
-    protected void writeObject(Writer out, Literal literal) throws Exception {
+    protected void writeObject(Writer out, Literal literal, URI predicate) throws Exception {
         if (literal == null) {
             out.write("null<Literal>");
         } else if (literal.getLanguage() != null) {
             writeString(out, literal.stringValue());
             out.write("@" + literal.getLanguage());
         } else if (literal.getDatatype() != null) {
-            boolean useExplicit = (stringDataTypeOption == SesameSortedRDFWriterFactory.StringDataTypeOptions.explicit) || !(xsString.equals(literal.getDatatype()) || rdfLangString.equals(literal.getDatatype()));
             writeString(out, literal.stringValue());
-            if (useExplicit) {
+            if (useExplicitStringDataTyping(predicate, literal.getDatatype())) {
                 out.write("^^");
                 writeUri(out, literal.getDatatype());
             }

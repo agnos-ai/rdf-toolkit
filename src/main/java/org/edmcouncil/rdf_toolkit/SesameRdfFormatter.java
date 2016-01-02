@@ -131,7 +131,7 @@ public class SesameRdfFormatter {
         URI inferredBaseUri = null;
         String[] leadingComments = null;
         String[] trailingComments = null;
-        SesameSortedRDFWriterFactory.StringDataTypeOptions stringDataTypeOption = SesameSortedRDFWriterFactory.StringDataTypeOptions.implicit;
+        SesameSortedRDFWriterFactory.StringDataTypeOptions stringDataTypeOption = SesameSortedRDFWriterFactory.StringDataTypeOptions.defaultEnum;
 
         // Parse the command line options.
         CommandLineParser parser = new BasicParser();

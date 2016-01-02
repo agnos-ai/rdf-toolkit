@@ -573,16 +573,16 @@ class SesameSortedTurtleWriterSpec extends FlatSpec with Matchers with SesameSor
     }
   }
 
-  it should "be able to use explicit data typing for strings" in {
+  it should "be able to use implicit data typing for strings" in {
     val inputFile = new File("src/test/resources/other/topbraid-countries-ontology.ttl")
-    val outputFile = new File(outputDir1, "topbraid-countries-ontology_sdt-explicit.ttl")
+    val outputFile = new File(outputDir1, "topbraid-countries-ontology_sdt-implicit.ttl")
     SesameRdfFormatter run Array[String](
       "-s", inputFile getAbsolutePath,
       "-t", outputFile getAbsolutePath,
-      "-sdt", "explicit"
+      "-sdt", "implicit"
     )
     val content = getFileContents(outputFile, "UTF-8")
-    assert(content.contains("^^xsd:string"), "explicit string data typing seems to have failed")
+    assert(!content.contains("^^xsd:string") && !content.contains("^^rdf:langString"), "implicit string data typing seems to have failed")
   }
 
 }
